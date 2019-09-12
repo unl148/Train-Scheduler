@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+​
+​
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Train Scheduler</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <!-- Jumbotron -->
+    <div class="container">
+        <div class="jumbotron bg-info ">
+            <h1 class="display-4 text-white text-center">Train Scheduler</h1>
+        </div>
+        <!-- Card - table (header,body)to display traind schedules-->
+        <div class="card">
+            <div class="card-header bg-info">
+                Current Train Schedule
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Train Name</th>
+                            <th scope="col">Destination</th>
+                            <th scope="col">Frequency(min)</th>
+                            <th scope="col">Next Arrival</th>
+                            <th scope="col">Minutes Away</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+        </div><br>
+        <!-- Card - with Form to Submit Data-->
+        <div class="card">
+            <div class="card-header bg-info">
+                Add Train Details
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <form>
+                        <div class="form-group">
+                            <label for="train-name">Train Name</label>
+                            <input type="text" class="form-control" id="train-name" placeholder="1 Express">
+                        </div>
+                        <div class="form-group">
+                            <label for="destination">Destination</label>
+                            <input type="text" class="form-control" id="destination" placeholder="L.A.">
+                        </div>
+                        <div class="form-group">
+                            <label for="frequency">Frequency</label>
+                            <input type="text" class="form-control" id="frequency" placeholder="30 min">
+                        </div>
+                        <div class="form-group">
+                            <label for="first-arrival">First Trtain Time (HH:mm)</label>
+                            <input type="text" class="form-control" id="first-arrival" placeholder="5:30 AM">
+                        </div>
+                    </form>
+                </h5>
+                <button class="btn btn-primary" id="submit" type="submit">Submit</button>
+            </div>
+        </div>
+        ​
+        <br>
+        ​
+    </div>
+    <br>
+    <!-- scripts for jquery, ajax, boostrap, firebase-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-app.js"></script>
+    <!-- Specific Firebase products we want (Database) -->
+    <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-database.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAOtfGU4fxQFaAgAbhvc8xqluQamyUB0eo",
+            authDomain: "first-pro-4dd25.firebaseapp.com",
+            databaseURL: "https://first-pro-4dd25.firebaseio.com",
+            projectId: "first-pro-4dd25",
+            storageBucket: "",
+            messagingSenderId: "464117412714",
+            appId: "1:464117412714:web:62263cb7b5ee5702376b13"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        //Assign a variable to firebse db
+        var db = firebase.database();
+
+        // function to submit data
+        $("#submit").on("click",function(){
+            var trainName = $("#train-name").val();
+            var destination = $("#destination").val();
+            var frequency = $("#frequency").val();
+            var firstArrival = $("#first-arrival").val();
+            //console.log(trainName + destination+frequency+firstArrival);
+
+            db.ref().push({
+                trainNameDB: trainName,
+                destinationDB: destination,
+                frequencyDB: frequency,
+                firstArrivalDB: firstArrival
+            });  //end db push
+
+        }); // end submit click
+
+        // function database ref on new child added
+
+        db.ref().on("child_added", function(snaps){
+            var newRow = $("<tr>");
+            newRow.append("<td>" + snaps.val().trainNameDB+ "</td>");
+            newRow.append("<td>"+ snaps.val().destinationDB+"</td>");
+            newRow.append("<td>"+snaps.val().frequencyDB+"</td>");
+            newRow.append("<td>"+snaps.val().firstArrivalDB+"</td>");
+                console.log(snaps);
+            $(".table").append(newRow);
+        })
+
+
+
+    </script>
+
+
+</body>
+
+</html>
